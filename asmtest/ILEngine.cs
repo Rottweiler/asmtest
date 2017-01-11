@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+
+namespace asmtest
+{
+
+    /*
+     *  Created by Rottweiler ( http://github.com/Rottweiler )
+     * 
+     *  Copyright 2017 Rottweiler
+     *  This file is part of asmtest.
+     *  asmtest is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version
+     *  asmtest is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+     *  You should have received a copy of the GNU General Public License along with asmtest. If not, see http://www.gnu.org/licenses/.
+     * 
+     *  Basically, use as you'd like, as long as you leave the credits.
+     * 
+     */
+
+    /// <summary>
+    /// ILEngine
+    /// </summary>
+    public class ILEngine
+    {
+        private static Type[] GetParameterTypes<T>()
+        {
+            List<Type> types = new List<Type>();
+            foreach (ParameterInfo par in typeof(T).GetMethod("Invoke").GetParameters())
+            {
+                types.Add(par.ParameterType);
+            }
+            return types.ToArray();
+        }
+
+        public static T CreateMethod<T>(params Instruction[] instructions)
+        {
+            var dynamic_method = new DynamicMethod("", typeof(T).GetMethod("Invoke").ReturnType, GetParameterTypes<T>(), typeof(ILEngine).Module);
+            ILGenerator gen = dynamic_method.GetILGenerator();
+
+            foreach (Instruction inst in instructions)
+            {
+                if (inst.Operand == null)
+                {
+                    gen.Emit(inst.OpCode);
+                }
+                else
+                {
+                    /* CALL */
+                    if (inst.OpCode == OpCodes.Call)
+                    {
+                        gen.EmitCall(OpCodes.Call, (MethodInfo)inst.Operand, null);
+                        continue;
+                    }
+
+                    /* TYPES */
+                    if (inst.Operand.GetType() == typeof(string))
+                    {
+                        var value = (string)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                    }
+
+                    if (inst.Operand.GetType() == typeof(byte))
+                    {
+                        var value = (byte)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                    }
+
+                    if (inst.Operand.GetType() == typeof(int))
+                    {
+                        var value = (int)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                    }
+
+                    //todo: better way, or add more types
+                }
+
+            }
+
+            return (T)(dynamic_method.CreateDelegate(typeof(T)) as object);
+        }
+    }
+
+    /// <summary>
+    /// Instruction
+    /// </summary>
+    public class Instruction
+    {
+        public OpCode OpCode { get; set; }
+        public object Operand { get; set; }
+
+        public Instruction(OpCode op_code, object operand)
+        {
+            OpCode = op_code;
+            Operand = operand;
+
+            //todo check valid operand type
+        }
+
+        public Instruction(OpCode op_code)
+        {
+            OpCode = op_code;
+        }
+
+        public static Instruction Create(OpCode op_code)
+        {
+            return new Instruction(op_code);
+        }
+
+        public static Instruction Create(OpCode op_code, object operand)
+        {
+            return new Instruction(op_code, operand);
+        }
+
+        public Instruction() { }
+    }
+}
