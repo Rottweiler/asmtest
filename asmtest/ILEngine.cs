@@ -54,26 +54,126 @@ namespace asmtest
                         continue;
                     }
 
+                    /*if(inst.OpCode == OpCodes.Calli)
+                    {
+                        gen.EmitCalli(OpCodes.Calli, (MethodInfo)inst.Operand, null); //CallingConvention.StdCall, T, new Type[] { T, T }
+                        continue;
+                    }*/
+
+                    //gen.EmitWriteLine();
+
                     /* TYPES */
+                    if (inst.Operand.GetType() == typeof(LocalBuilder))
+                    {
+                        var value = (LocalBuilder)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(FieldInfo))
+                    {
+                        var value = (FieldInfo)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(Label[]))
+                    {
+                        var value = (Label[])inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(Label))
+                    {
+                        var value = (Label)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
                     if (inst.Operand.GetType() == typeof(string))
                     {
                         var value = (string)inst.Operand;
                         gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(float))
+                    {
+                        var value = (float)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
                     }
 
                     if (inst.Operand.GetType() == typeof(byte))
                     {
                         var value = (byte)inst.Operand;
                         gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(sbyte))
+                    {
+                        var value = (sbyte)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(double))
+                    {
+                        var value = (double)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
                     }
 
                     if (inst.Operand.GetType() == typeof(int))
                     {
                         var value = (int)inst.Operand;
                         gen.Emit(inst.OpCode, value);
+                        continue;
                     }
 
-                    //todo: better way, or add more types
+                    if (inst.Operand.GetType() == typeof(MethodInfo))
+                    {
+                        var value = (MethodInfo)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(short))
+                    {
+                        var value = (short)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(SignatureHelper))
+                    {
+                        var value = (SignatureHelper)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(ConstructorInfo))
+                    {
+                        var value = (ConstructorInfo)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(Type))
+                    {
+                        var value = (Type)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
+
+                    if (inst.Operand.GetType() == typeof(long))
+                    {
+                        var value = (long)inst.Operand;
+                        gen.Emit(inst.OpCode, value);
+                        continue;
+                    }
                 }
 
             }
